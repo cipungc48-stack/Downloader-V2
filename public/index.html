@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoostTeam - Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #e2e8f0; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+        .brutal-shadow { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); }
+        .brutal-border { border: 3px solid black; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 font-mono">
+    <div class="w-full max-w-md bg-white brutal-border brutal-shadow overflow-hidden">
+        <div class="bg-[#7e22ce] p-6 text-white border-b-4 border-black relative">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-[#bef264] brutal-border flex items-center justify-center text-black font-black text-xs">GOOST</div>
+                <div>
+                    <p class="text-[#bef264] font-bold text-xs uppercase">Administrator</p>
+                    <h1 class="text-2xl font-black uppercase">Media Downloader</h1>
+                </div>
+            </div>
+            <a href="baca.html" class="absolute right-4 top-4 bg-yellow-400 text-black border-2 border-black px-2 py-1 text-[10px] font-black hover:bg-white transition-all">BACA YA INI!</a>
+        </div>
 
+        <div class="p-6 space-y-6">
+            <div>
+                <label class="block font-black text-sm mb-2 uppercase">Target URL :</label>
+                <input type="text" id="targetUrl" placeholder="Paste link di sini..." class="w-full p-4 brutal-border focus:outline-none focus:bg-yellow-50 font-bold">
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-1 brutal-border text-[10px] font-black bg-gray-100">#TIKTOK</span>
+                <span class="px-2 py-1 brutal-border text-[10px] font-black bg-gray-100">#IG</span>
+                <span class="px-2 py-1 brutal-border text-[10px] font-black bg-gray-100">#YT</span>
+            </div>
+            <button id="btnDownload" onclick="startDownload()" class="w-full bg-[#bef264] p-4 text-xl font-black brutal-border brutal-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase">
+                Initiate Download
+            </button>
+        </div>
+    </div>
+    <footer class="mt-8 text-center">
+        <p class="text-xs font-bold uppercase">Developed By <span class="bg-black text-white px-2 py-1">GoostTeam</span></p>
+    </footer>
+
+    <script>
+        async function startDownload() {
+            const input = document.getElementById('targetUrl');
+            const btn = document.getElementById('btnDownload');
+            
+            if (!input.value) return alert("Masukkan linknya dulu!");
+
+            btn.disabled = true;
+            btn.innerHTML = "MEMPROSES...";
+
+            try {
+                const response = await fetch(`/download?url=${encodeURIComponent(input.value)}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const videoLink = data.result?.video || data.video;
+                    if (videoLink) {
+                        window.open(videoLink, '_blank');
+                        btn.innerHTML = "BERHASIL!";
+                    }
+                } else {
+                    alert(data.message || "Error: " + data.error);
+                }
+            } catch (err) {
+                alert("Gagal terhubung ke server GoostTeam.");
+            } finally {
+                btn.disabled = false;
+                setTimeout(() => btn.innerHTML = "Initiate Download", 3000);
+            }
+        }
+    </script>
+</body>
+</html>
